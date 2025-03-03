@@ -35,7 +35,7 @@ const signup = async (req, res) => {
       ))
 
   } catch (error) {
-    return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "something went wrong",
       data: {},
