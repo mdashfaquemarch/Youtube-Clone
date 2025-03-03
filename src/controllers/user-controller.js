@@ -1,6 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import {UserService} from '../services/index.js'
-
+import {ApiResponse} from '../utils/ApiResponse.js'
 
 const userService = new UserService();
 
@@ -28,9 +28,11 @@ const signup = async (req, res) => {
   
       return res
       .status(StatusCodes.CREATED)
-      .json({
-        message: files
-      })
+      .json(new ApiResponse(
+        200,
+        response,
+        "User signup successfully"
+      ))
 
   } catch (error) {
     return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
