@@ -18,12 +18,18 @@ const signup = async (req, res) => {
         then return response with successfully created user
     */
 
-      console.log("req body -> ",req.body);
-      console.log("req files -> ",req.files);
+      const userData = req.body;
+      const files = req.files;
+      
+      
      
-      // const response = await userService.signup(req.body)
-      return res.json({
-        message: req.files
+      const response = await userService.signup(userData, files);
+      
+  
+      return res
+      .status(StatusCodes.CREATED)
+      .json({
+        message: files
       })
 
   } catch (error) {
