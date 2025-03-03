@@ -6,6 +6,21 @@ import { ApiError } from "../utils/ApiError.js";
 import fs from 'fs'
 const userService = new UserService();
 
+/*
+   TODOD:
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser,
+    updateAccountDetails,
+    updateUserAvatar,
+    updateUserCoverImage,
+    getUserChannelProfile,
+    getWatchHistory
+*/
+
 const signup = asyncHandler(async (req, res) => {
   try {
     /*
