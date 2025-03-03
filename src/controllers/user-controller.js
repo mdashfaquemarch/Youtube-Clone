@@ -43,8 +43,9 @@ const signup = asyncHandler(async (req, res) => {
   }
 });
 
-const login = async (req, res) => {
+const login = asyncHandler( async (req, res) => {
   try {
+    
   } catch (error) {
     return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
@@ -53,7 +54,7 @@ const login = async (req, res) => {
       error: error,
     });
   }
-};
+});
 
 const logout = async (req, res) => {
   try {
