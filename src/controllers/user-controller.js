@@ -1,10 +1,12 @@
 import { StatusCodes } from "http-status-codes";
 import {UserService} from '../services/index.js'
 import {ApiResponse} from '../utils/ApiResponse.js'
-
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { ApiError } from "../utils/ApiError.js";
+import fs from 'fs'
 const userService = new UserService();
 
-const signup = async (req, res) => {
+const signup = asyncHandler(async (req, res) => {
   try {
     /*
         req.body -> username email password fullname
@@ -35,14 +37,11 @@ const signup = async (req, res) => {
       ))
 
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "something went wrong",
-      data: {},
-      error: error,
-    });
+      //  One-liner to delete uploaded files if an error occurs
+      Object.values(req.files || {}).flat().forEach(file => fs.existsSync(file.path) && fs.unlinkSync(file.path));
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message || "Something went wrong")
   }
-};
+});
 
 const login = async (req, res) => {
   try {
