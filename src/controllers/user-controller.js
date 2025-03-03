@@ -1,8 +1,31 @@
-import { User } from "../models/users-model.js";
 import { StatusCodes } from "http-status-codes";
+import {UserService} from '../services/index.js'
+
+
+const userService = new UserService();
 
 const signup = async (req, res) => {
   try {
+    /*
+        req.body -> username email password fullname
+        validate all of them 
+        check if user already exits -> username, email
+        if exists then return response with user already exists
+        req.files check for avatar and coverImage (optional)
+        then upload avatar and coverImage to cloudinary and get urls 
+        create user 
+        check if user created or not
+        then return response with successfully created user
+    */
+
+      console.log("req body -> ",req.body);
+      console.log("req files -> ",req.files);
+     
+      // const response = await userService.signup(req.body)
+      return res.json({
+        message: req.files
+      })
+
   } catch (error) {
     return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,

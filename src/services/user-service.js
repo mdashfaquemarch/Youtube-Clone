@@ -7,7 +7,7 @@ class UserService {
 
   async signup(data) {
     try {
-
+       
     } catch (error) {
       console.error("Something went wrong in the UserService : signup");
       throw error;
