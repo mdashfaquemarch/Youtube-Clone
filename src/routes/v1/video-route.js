@@ -1,9 +1,9 @@
 import express from "express";
 
-import { publishAVideo } from "../../controllers/video-controller.js";
+import { publishAVideo, getVideoById } from "../../controllers/video-controller.js";
 import validate from "../../middlewares/validate-middleware.js";
 import { verifyAuth } from "../../middlewares/auth-middleware.js";
-import { createVideoValue } from "../../utils/validators/video.js";
+import { createVideoValue, } from "../../utils/validators/video.js";
 import { upload } from "../../middlewares/multer-middleware.js";
 
 const router = express.Router();
@@ -24,5 +24,7 @@ router.route("/publish-video").post(
   validate(createVideoValue),
   publishAVideo
 );
+
+router.route("/:videoId").get(getVideoById);
 
 export default router;
