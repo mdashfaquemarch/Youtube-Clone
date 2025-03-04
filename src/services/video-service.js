@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { VideoRepo } from "../repositories/index.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary-util.js";
-
+import mongoose, {isValidObjectId} from "mongoose"
 
 class VideoService {
 
@@ -64,14 +64,72 @@ class VideoService {
     }
 
     async deleteVideo(id) {
+      if(!isValidObjectId(id)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId")
+      }
 
+      const video = await this.videoRepo.get(id);
+
+      if(!video) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Video not found")
+      }
+
+      const response = await this.videoRepo.destroy(id);
+
+      if (!response) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to delete the video by Id");
+      }
+
+      return response;
     }
 
     async getVideoById(id) {
+      
+      if(!isValidObjectId(id)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
+      }
 
+      const video = await this.videoRepo.get(id);
+      if(!video) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Video not found");
+      }
+      
+      const response = await this.videoRepo.getVideoById(video._id);
+      if (!response) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to get video by Id");
+      }
+      return response;
     }
 
     async getAllVideo() {
+
+    }
+
+    async toggleStatusOfVideo(id) {
+
+      if(!isValidObjectId(id)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid VideoId");
+      }
+
+      const video = await this.videoRepo.get(id);
+      if(!video) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Video not found");
+      }
+
+      const statusUpdated = await this.videoRepo.update(
+        id,
+        {
+          $set: {
+            isPublished: !video.isPublished
+          }
+        }
+      )
+
+      if (!updatedVideo) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Failed to update video status");
+      }
+
+      return statusUpdated;
 
     }
 }
