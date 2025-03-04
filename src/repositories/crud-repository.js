@@ -17,7 +17,7 @@ class CrudRepo {
          }
     }
 
-    // read
+    // read -> find by id
     async get(id) {
         try {
             const response = await this.model.findById(id);
@@ -58,6 +58,16 @@ class CrudRepo {
             return response;
         } catch (error) {
             console.error("Something went wrong in crud repo: getAll");
+            throw error;
+        }
+    }
+
+    async findOnlyOne(data) {
+        try {
+            const response = await this.model.findOne(data);
+            return response;
+        } catch (error) {
+            console.log("Something went wrong in crud repo: findWith");
             throw error;
         }
     }
