@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import fs from "fs";
+import { config } from "../config/server-config.js";
 const userService = new UserService();
 
 /*
