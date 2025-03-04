@@ -3,6 +3,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary-util.js";
 import { ApiError } from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 
+
 class UserService {
   constructor() {
     this.userRepo = new UserRepo();
@@ -107,14 +108,60 @@ class UserService {
     }
   }
 
-  async login(data) {
+  async login(userData) {
     try {
+
+      const user = await this.userRepo.findOnlyOne({email: userData.email});
+
+      if(!user) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "User not registered. Please sign up first.", error)
+      }
+
+       const isPasswordValid = await user.isPasswordCorrect(userData.password);
+
+       if(!isPasswordValid) {
+          throw new ApiError(StatusCodes.UNAUTHORIZED, "Invalid credentials.", error)
+       }
+
+       const accessToken = await user.generateAccessToken();
+
+       if(!accessToken) {
+        throw new ApiError(500, "Something went wrong while generating  access token", error)
+       }
+
+       const refreshToken = await user.generateRefreshToken();
+
+       if(!refreshToken) {
+        throw new ApiError(500, "Something went wrong while generating referesh token", error)
+       }
+
+       user.refreshToken = refreshToken;
+       await user.save({validateBeforeSave: false});
+
+       const loggedInUser = await this.userRepo.getUser(user._id);
+
+      return {loggedInUser, accessToken, refreshToken};
+
     } catch (error) {
       console.error("Something went wrong in the UserService : login", error);
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "", error)
+    }
+  }
+
+  async logout(user) {
+    try {
+       const logout = await this.userRepo.update(user?._id, {
+         $set: {
+           refreshToken: ""
+         }
+       })
+       return logout;
+    } catch (error) {
+      console.log("Something went wrong in the UserService : logout", error);
       throw new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,
         error.message || "Something went wrong"
-      );
+      )
     }
   }
 }
