@@ -6,6 +6,7 @@ import cors from 'cors'
 
 import apiRoutes from './routes/index.js';
 import errorHandler from './middlewares/error-middleware.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
-
+app.use(cookieParser())
 
 
 

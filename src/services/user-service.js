@@ -161,7 +161,8 @@ class UserService {
       console.log("Something went wrong in the UserService : logout", error);
       throw new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,
-        error.message || "Something went wrong"
+        "Something went wrong",
+        [error.message]
       );
     }
   }
