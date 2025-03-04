@@ -21,8 +21,19 @@ class UserRepo extends CrudRepo {
              console.error("Something went wrong in the UserRepo : checkUserExists");
              throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message || "Something went wrong");
         }
-    } 
+    }
 
+    // get user with selected fields
+    async getUser(id) {
+        try {
+            const response = await User.findById(id).select("-password -refreshToken");
+            return response;
+        } catch (error) {
+            console.error("Something went wrong in the UserRepo : getUser");
+            throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message || "Something went wrong");
+        }
+    }
+    
 }
 
 export default UserRepo;
