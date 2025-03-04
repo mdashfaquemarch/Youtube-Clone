@@ -1,9 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import {UserService} from '../services/index.js'
-import {ApiResponse} from '../utils/ApiResponse.js'
+import { UserService } from "../services/index.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import fs from 'fs'
+import fs from "fs";
 const userService = new UserService();
 
 /*
@@ -35,32 +35,28 @@ const signup = asyncHandler(async (req, res) => {
         then return response with successfully created user
     */
 
-      const userData = req.body;
-      const files = req.files;
-      
-      
-     
-      const response = await userService.signup(userData, files);
-      
-  
-      return res
-      .status(StatusCodes.CREATED)
-      .json(new ApiResponse(
-        200,
-        response,
-        "User signup successfully"
-      ))
+    const userData = req.body;
+    const files = req.files;
 
+    const response = await userService.signup(userData, files);
+
+    return res
+      .status(StatusCodes.CREATED)
+      .json(new ApiResponse(200, response, "User signup successfully"));
   } catch (error) {
-      //  One-liner to delete uploaded files if an error occurs
-      Object.values(req.files || {}).flat().forEach(file => fs.existsSync(file.path) && fs.unlinkSync(file.path));
-      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message || "Something went wrong")
+    //  One-liner to delete uploaded files if an error occurs
+    Object.values(req.files || {})
+      .flat()
+      .forEach((file) => fs.existsSync(file.path) && fs.unlinkSync(file.path));
+    throw new ApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      error.message || "Something went wrong"
+    );
   }
 });
 
-const login = asyncHandler( async (req, res) => {
-  try {
-
+const login = asyncHandler(async (req, res) => {
+  
     /*
         req.body validate -> email password
         find user based on email
@@ -71,17 +67,56 @@ const login = asyncHandler( async (req, res) => {
         set cookie for accesstoken and refreshtoken
         return response
     */
-     
-      const userData = req.body;
 
-      const response = await userService.login(userData);
+    const userData = req.body;
 
-      return res
+    const { loggedInUser, accessToken, refreshToken } = await userService.login(
+      userData
+    );
+    //  cookie options
+
+    const options = {
+      httpOnly: true,
+      secure: config.NODE_ENV === "development" ? false : true,
+    };
+
+    return res
       .status(StatusCodes.OK)
-      .josn(new ApiResponse(200, response, "User logged In successfully"))
-    
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          {
+            user: loggedInUser,
+            accessToken,
+            refreshToken,
+          },
+          "User logged In successfully"
+        )
+      );
+  
+  
+});
+
+const logout = asyncHandler(async (req, res) => {
+  try {
+    console.log(req.user);
+    const logout = await userService.logout(req.user);
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(StatusCodes.OK)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(StatusCodes.OK, {}, "User logged Out"));
+      
   } catch (error) {
-    return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "something went wrong",
       data: {},
@@ -90,16 +125,4 @@ const login = asyncHandler( async (req, res) => {
   }
 });
 
-const logout = async (req, res) => {
-  try {
-  } catch (error) {
-    return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "something went wrong",
-      data: {},
-      error: error,
-    });
-  }
-};
-
-export { signup, login };
+export { signup, login , logout};
