@@ -1,4 +1,3 @@
-import mongoose, {isValidObjectId} from "mongoose"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import {VideoService} from "../services/index.js"
 import { StatusCodes } from "http-status-codes";
@@ -11,7 +10,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 })
 
 const publishAVideo = asyncHandler(async (req, res) => {
-    const { title, description} = req.body;
+    
     // TODO: get video, upload to cloudinary, create video
     /*
         - req.body -> validate 
@@ -43,6 +42,9 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: get video by id
+
+    const response = await videoService.getVideoById(videoId);
+    return res.status(StatusCodes.OK).json(response);
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
@@ -54,10 +56,15 @@ const updateVideo = asyncHandler(async (req, res) => {
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: delete video
+    const response = await videoService.deleteVideo(videoId);
+    return res.status(StatusCodes.OK).json(response);
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const { videoId } = req.params;
+
+    const response = await videoService.getVideoById(videoId);
+    return res.status(StatusCodes.OK).json(response);
 })
 
 export {
