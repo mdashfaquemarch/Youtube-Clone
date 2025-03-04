@@ -60,6 +60,25 @@ const signup = asyncHandler(async (req, res) => {
 
 const login = asyncHandler( async (req, res) => {
   try {
+
+    /*
+        req.body validate -> email password
+        find user based on email
+        if not found in db return response please register first
+        if user found in db then
+        check password
+        create a accessToken and refreshToken
+        set cookie for accesstoken and refreshtoken
+        return response
+    */
+     
+      const userData = req.body;
+
+      const response = await userService.login(userData);
+
+      return res
+      .status(StatusCodes.OK)
+      .josn(new ApiResponse(200, response, "User logged In successfully"))
     
   } catch (error) {
     return res.staus(StatusCodes.INTERNAL_SERVER_ERROR).json({
