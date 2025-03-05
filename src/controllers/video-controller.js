@@ -51,6 +51,15 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: update video details like title, description, thumbnail
 
+    const files = req.file;
+    console.log("Files in update controller", files);
+    const updateDetails = req.body;
+    console.log("updateDetails", updateDetails);
+
+    const response = await videoService.updateVideo(videoId, updateDetails, files);
+
+    return res.status(StatusCodes.OK).json(response);
+
 })
 
 const deleteVideo = asyncHandler(async (req, res) => {
