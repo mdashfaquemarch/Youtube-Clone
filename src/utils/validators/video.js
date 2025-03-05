@@ -5,9 +5,9 @@ const createVideoValue = Joi.object({
     description: Joi.string().min(3).max(1000).required(),
 });
 
-const loginValue = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().min(4).max(40).required()
+const updateVideo = Joi.object({
+    title: Joi.string().min(0).max(100),
+    description: Joi.string().min(0).max(1000),
 });
 
 
