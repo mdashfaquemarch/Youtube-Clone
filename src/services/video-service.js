@@ -167,7 +167,17 @@ class VideoService {
     return response;
   }
 
-  async getAllVideo() {}
+  /*
+✅ Search functionality 🔍 (filters videos based on title/description).
+✅ Pagination support 📄 (fetch videos in pages).
+✅ Sorting support 🔀 (sort by date, views, likes, etc.).
+✅ User-specific filtering 👤 (get videos from a specific user).
+*/
+
+  async getAllVideos(searchFilter, sortOptions, pageNumber, limitNumber) {
+    const {videos, totalVideos} = await this.videoRepo.getAllVideosWithQuery(searchFilter, sortOptions, pageNumber, limitNumber);
+    return {videos, totalVideos};
+  }
 
   async toggleStatusOfVideo(id) {
     if (!isValidObjectId(id)) {
