@@ -15,6 +15,19 @@ class VideoRepo extends CrudRepo {
             throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message || "Something went wrong");
         }
     }
+
+    async getAllVideosWithQuery(searchFilter, sortOptions, pageNumber, limitNumber) {
+        // Fetch videos from DB
+        const videos = await Video.find(searchFilter)
+            .sort(sortOptions)  // 🔥 Sort by views/likes
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+
+            // Count total videos (for pagination)
+        const totalVideos = await Video.countDocuments(searchFilter);
+
+        return {videos, totalVideos};
+    }
 }
 
 export default VideoRepo;
