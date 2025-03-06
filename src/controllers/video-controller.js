@@ -122,7 +122,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
 
-    const response = await videoService.getVideoById(videoId);
+    const response = await videoService.toggleStatusOfVideo(videoId);
     return res.status(StatusCodes.OK).json(response);
 })
 

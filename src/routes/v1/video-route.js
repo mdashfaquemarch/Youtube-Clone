@@ -1,14 +1,16 @@
 import express from "express";
 
-import { publishAVideo, getVideoById } from "../../controllers/video-controller.js";
+import { publishAVideo, getVideoById , deleteVideo, updateVideo, togglePublishStatus} from "../../controllers/video-controller.js";
 import validate from "../../middlewares/validate-middleware.js";
 import { verifyAuth } from "../../middlewares/auth-middleware.js";
-import { createVideoValue, } from "../../utils/validators/video.js";
+import { createVideoValue, updateVideoValue} from "../../utils/validators/video.js";
 import { upload } from "../../middlewares/multer-middleware.js";
 
 const router = express.Router();
 
-router.use(verifyAuth); // Apply verifyJWT middleware to all routes in this file
+// Apply verifyJWT middleware to all routes in this file
+
+router.use(verifyAuth); 
 
 router.route("/publish-video").post(
   upload.fields([
@@ -25,6 +27,14 @@ router.route("/publish-video").post(
   publishAVideo
 );
 
-router.route("/:videoId").get(getVideoById);
+router.route("/:videoId")
+.get(getVideoById)
+.delete(deleteVideo);
+
+router.route("/update-video/:videoId")
+.put(upload.single("thumbnail"),validate(updateVideoValue), updateVideo);
+
+router.route("/toggle/publish/:videoId")
+.patch(togglePublishStatus);
 
 export default router;

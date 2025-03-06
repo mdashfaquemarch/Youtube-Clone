@@ -37,6 +37,7 @@ class VideoService {
     const video = await uploadOnCloudinary(videoLocalPath);
 
     if (!video) {
+      fs.unlinkSync(thumnailLocalPath);
       throw new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,
         "Something went while uploading the video file on cloudinary"
@@ -103,7 +104,7 @@ class VideoService {
         console.log("Deleting Old Thumbnail - Public ID:", publicId);
 
         const deletedThumnail = await deleteFromCloudinary(publicId);
-        if(!deletedVideo) {
+        if(!deletedThumnail) {
           throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Error while deleting the old thumbnail")
         }
       }
@@ -195,7 +196,7 @@ class VideoService {
       },
     });
 
-    if (!updatedVideo) {
+    if (!statusUpdated) {
       throw new ApiError(
         StatusCodes.INTERNAL_SERVER_ERROR,
         "Failed to update video status"
