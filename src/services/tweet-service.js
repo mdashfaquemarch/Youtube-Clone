@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import {TweetRepo} from '../repositories/index.js';
+import {TweetRepo, UserRepo} from '../repositories/index.js';
 import { ApiError } from '../utils/ApiError.js';
 import { isValidObjectId } from 'mongoose';
 
@@ -8,6 +8,7 @@ class TweetService {
 
     constructor() {
         this.tweetRepo = new TweetRepo();
+        this.userRepo = new UserRepo();
     }
 
 
@@ -35,16 +36,64 @@ class TweetService {
     }
 
 
-    async updateTweet(tweetId, data) {
+    async updateTweet(tweetId, data, user) {
+
+        if(!isValidObjectId(tweetId)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "tweetId is not valid");
+        }
         
+        const tweet = await this.tweetRepo.get(tweetId);
+
+        if(!tweet) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Tweet not found");
+        }
+
+        if(tweet.owner.toString() !== user._id.toString()) {
+          throw new ApiError(StatusCodes.FORBIDDEN, "You are not allowed to update this tweet");
+        }
+
+        const updatedTweet = await this.tweetRepo.update(tweetId,
+            {
+                $set: {
+                    content: data.content
+                }
+            }
+        );
+
+        return updatedTweet;
     }
 
-    async deleteTweet(tweetId, data) {
+    async deleteTweet(tweetId, user) {
+        if(!isValidObjectId(tweetId)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "tweetId is not valid");
+        }
+        const tweet = await this.tweetRepo.get(tweetId);
 
+        if(!tweet) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Tweet not found");
+        }
+
+        if(tweet.owner.toString() !== user._id.toString()) {
+            throw new ApiError(StatusCodes.FORBIDDEN, "You are not allowed to delete this tweet");
+        }
+
+        const deletedTweet = await this.tweetRepo.destroy(tweetId);
+
+        return deletedTweet;
     }
 
-    async getUserTweets(tweetId, data) {
+    async getUserTweets(userData) {
+      
+      const user = await this.userRepo.findOnlyOne({username: userData.username});
 
+      if(!user) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+      }
+
+
+      const usersAllTweets = await this.tweetRepo.findAllTweets({owner: user?._id});
+
+      return usersAllTweets;
     }
 
 

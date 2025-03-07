@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const createTweetValue = Joi.object({
-  content: Joi.string().min(3).max(500).required(),
+  content: Joi.string().trim().min(3).max(500).required(),
 });
 
 
