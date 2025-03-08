@@ -8,8 +8,13 @@ class SubsRepo extends CrudRepo{
     }
 
     // findOneAndDelete
-    async getOneAndDelte(data) {
+    async getOneAndDelete(data) {
         const response = await Subscription.findOneAndDelete(data);
+        return response;
+    }
+
+    async getChannelInfo(data, fields) {
+        const response = await Subscription.find(data).populate();;
         return response;
     }
     
