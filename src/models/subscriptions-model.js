@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 
 
 const subscriptionSchema = new mongoose.Schema({
-    follower: {
+    subscriber: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    following: {
+    subscription: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }
