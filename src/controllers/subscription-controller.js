@@ -1,13 +1,21 @@
 import mongoose, {isValidObjectId} from "mongoose"
 import {asyncHandler} from "../utils/asyncHandler.js"
+import { User } from "../models/users-model.js";
+import { Subscription } from "../models/subscriptions-model.js";
+import  {SubscriptionService} from '../services/index.js'
 
+
+const subscriptionService = new SubscriptionService();
 
 const toggleSubscription = asyncHandler(async (req, res) => {
     const {channelName} = req.params;
     // TODO: toggle subscription
-    const user = req.user?._id;
+    const userId = req.user?._id;
 
-    
+     const response = await subscriptionService.toggleSubscription(channelName, userId);
+
+     return res.status(StatusCodes.OK).json(response);
+
 })
 
 // controller to return subscriber list of a channel
