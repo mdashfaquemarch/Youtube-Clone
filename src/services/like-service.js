@@ -1,12 +1,15 @@
 import { isValidObjectId } from 'mongoose';
-import {LikeRepo} from '../repositories/index.js'
+import {LikeRepo, TweetRepo, VideoRepo} from '../repositories/index.js'
 import { ApiError } from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
+import { Video } from '../models/videos-model.js';
 
 class LikeService {
 
     constructor() {
         this.likeRepo = new LikeRepo();
+        this.videoRepo = new VideoRepo();
+        this.tweetRepo = new TweetRepo
     }
 
     async toggleVideoLike(videoId, userId) {
@@ -20,7 +23,7 @@ class LikeService {
         }
 
 
-        const video = await this.likeRepo.get(videoId);
+        const video = await this.videoRepo.get(videoId);
 
         if(!video) {
             throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
@@ -43,6 +46,7 @@ class LikeService {
         return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "video liked successfully"};
     }
 
+    //TODO: complete this method wrong method
     async toggleCommentLike(commentId, userId) {
         if(isValidObjectId(commentId)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId");
@@ -76,8 +80,8 @@ class LikeService {
         return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "comment liked successfully"};
     }
 
-    async toggleTweetLike(videoId, userId) {
-        if(isValidObjectId(videoId)) {
+    async toggleTweetLike(tweetId, userId) {
+        if(isValidObjectId(tweetId)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
         }
 
@@ -86,31 +90,44 @@ class LikeService {
         }
 
 
-        const video = await this.likeRepo.get(videoId);
+        const tweet = await this.tweetRepo.get(tweetId);
 
-        if(!video) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
+        if(!tweet) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "tweet not found");
         }
 
         const existingLike = await this.likeRepo.findOnlyOneAndDelete({
-            video: videoId,
+            tweet: tweetId,
             likedBy: userId._id
         })
 
         if(existingLike) {
-            return {statusCode: StatusCodes.OK, data: { isLiked: false}, message: "video unliked successfully"};
+            return {statusCode: StatusCodes.OK, data: { isLiked: false}, message: "tweet unliked successfully"};
         }
 
         await this.likeRepo.create({
-            video: videoId,
+            tweet: tweetId,
             likedBy: userId._id
         })
 
-        return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "video liked successfully"};
+        return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "tweet liked successfully"};
     }
 
-    async getLikedVideos() {
+    async getLikedVideos(userId) {
 
+        if(isValidObjectId(userId._id)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "invalid userId");
+        }
+
+        if(!userId._id) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "User is not authenticated")
+        }
+
+        const allLikedVideos = await this.likeRepo.findAllLikedVideos({
+            likedBy: userId._id
+        })
+
+        return allLikedVideos;
     }
 }
 
