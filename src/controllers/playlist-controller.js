@@ -41,7 +41,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
 const updatePlaylist = asyncHandler(async (req, res) => {
     const {playlistId} = req.params;
-    const {name, description} = req.body
+    const playlistData = req.body; // name description 
     //TODO: update playlist
 })
 
