@@ -8,9 +8,14 @@ class LikeRepo extends CrudRepo {
     }
 
     async findOnlyOneAndDelete(data) {
-        const response = await Like.findOneAndDelete(data);
+        const response = await Like.findOneAndDelete(data).populate("videos");
         return response;
     } 
+
+    async findAllLikedVideos(data) {
+        const response = await Like.find(data);
+        return response;
+    }
 }
 
 export default LikeRepo;
