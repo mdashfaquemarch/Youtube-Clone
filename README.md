@@ -1,5 +1,6 @@
 ```
-frontend routes:
+***frontend routes***:
+
 /	<HomePage />	                        Homepage (Trending, Recommended)
 /search?q=:query	<SearchResults />	    Search results page
 /video/:videoId	    <VideoPage />	        Watch a video
