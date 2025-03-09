@@ -1,10 +1,19 @@
 import mongoose, {isValidObjectId} from "mongoose"
 
 import {asyncHandler} from "../utils/asyncHandler.js"
+import {LikeService} from '../services/index.js'
+import { StatusCodes } from "http-status-codes";
+
+const likeService = new LikeService();
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
-    const {videoId} = req.params
+    const {videoId} = req.params;
     //TODO: toggle like on video
+    const userId = req.user;
+
+    const response = await likeService.toggleVideoLike(videoId, userId);
+
+    return res.status(StatusCodes.OK).json(response);
 })
 
 const toggleCommentLike = asyncHandler(async (req, res) => {
