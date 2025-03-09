@@ -3,6 +3,7 @@ import UserRepo from "./user-repository.js";
 import VideoRepo from "./video-repository.js";
 import TweetRepo from "./tweet-repository.js";
 import SubsRepo from "./subscription-repository.js";
+import LikeRepo from "./like-repository.js";
 
 export {
     CrudRepo,
@@ -10,4 +11,5 @@ export {
     VideoRepo,
     TweetRepo,
     SubsRepo,
+    LikeRepo
 }
