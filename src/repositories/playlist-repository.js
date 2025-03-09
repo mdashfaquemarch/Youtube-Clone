@@ -12,6 +12,11 @@ class PlayListRepo extends CrudRepo {
 
         return response;
     }
+
+    async addVideoToPlayList(id, data) {
+        const response = await PlayList.findByIdAndUpdate(id, data, {new : true});
+        return data;
+    }
 }
 
 export default PlayListRepo;
