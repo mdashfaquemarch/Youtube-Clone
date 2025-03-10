@@ -38,7 +38,7 @@ class PlayListService {
       throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
     }
 
-    const userPlaylists = await this.playlistRepo.channelPlaylist({
+    const userPlaylists = await this.playlistRepo.getChannelPlaylist({
       owner: user._id,
     });
 
@@ -46,6 +46,11 @@ class PlayListService {
   }
 
   async getPlaylistById(playlistId) {
+
+    if(isValidObjectId(playlistId)) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid playlistId");
+    }
+
     const playlist = await this.playlistRepo.get(playlistId);
 
     if (!playlist) {
@@ -57,19 +62,19 @@ class PlayListService {
 
   async addVideoToPlaylist(playlistId, videoId) {
     if (!isValidObjectId(playlistId) || !isValidObjectId(videoId)) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid playlistId or videoId");
     }
 
     const video = await this.videoRepo.get(videoId);
 
     if (!video) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
     }
 
     const playlist = await this.playlistRepo.get(playlistId);
 
     if (!playlist) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.NOT_FOUND, "playlist not found");
     }
 
     const result = await this.playlistRepo.addVideoToPlayList(playlistId, {
@@ -82,25 +87,29 @@ class PlayListService {
   async removeVideoFromPlaylist(playlistId, videoId) {
 
     if (!isValidObjectId(playlistId) || !isValidObjectId(videoId)) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid playlistId or videoId");
     }
 
     const video = await this.videoRepo.get(videoId);
 
     if (!video) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
     }
 
     const playlist = await this.playlistRepo.get(playlistId);
 
     if (!playlist) {
-      throw new ApiError();
+      throw new ApiError(StatusCodes.NOT_FOUND, "playlist not found");
     }
+
+    const response = await this.playlistRepo.deleteVideoFromPlayList(playlistId, videoId);
+
+    return response;
 
   }
 
   async deletePlaylist(playlistId) {
-    if (isValidObjectId(playlist)) {
+    if (isValidObjectId(playlistId)) {
       throw new ApiError(StatusCodes.BAD_REQUEST, "invalid playlist");
     }
 
@@ -114,7 +123,31 @@ class PlayListService {
     return response;
   }
 
-  async updatePlaylist(playlistId, data) {}
+  async updatePlaylist(playlistId, data) { // -> data -> {name decription}
+
+    if (isValidObjectId(playlistId)) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, "invalid playlist");
+    }
+
+    const playList = await this.playlistRepo.get(playlistId);
+
+    if(!playList) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "playlist not found");
+    }
+
+    let updateField;
+    if(data.title) {
+        updateField.title = data.title;
+    }
+
+    if(data.description) {
+      updateField.description = data.description;
+    }
+
+    const response = await this.playlistRepo.update(playlistId, updateField);
+
+    return response;
+  }
 }
 
 export default PlayListService;

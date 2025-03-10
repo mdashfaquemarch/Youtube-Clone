@@ -7,7 +7,7 @@ class PlayListRepo extends CrudRepo {
         super(PlayList)
     }
 
-    async channelPlaylist(data) {
+    async getChannelPlaylist(data) {
         const response = await PlayList.find(data)
 
         return response;
@@ -15,7 +15,16 @@ class PlayListRepo extends CrudRepo {
 
     async addVideoToPlayList(id, data) {
         const response = await PlayList.findByIdAndUpdate(id, data, {new : true});
-        return data;
+        return response;
+    }
+
+    async deleteVideoFromPlayList(playlistId, videoId) {
+        const response = await PlayList.findByIdAndDelete(playlistId, {
+            $pull: {
+                videos: videoId
+            }
+        })
+        return response;
     }
 }
 
