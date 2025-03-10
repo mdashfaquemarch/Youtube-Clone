@@ -1,5 +1,5 @@
 import { isValidObjectId } from 'mongoose';
-import {LikeRepo, TweetRepo, VideoRepo} from '../repositories/index.js'
+import {LikeRepo, TweetRepo, VideoRepo, CommentRepo} from '../repositories/index.js'
 import { ApiError } from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
 import { Video } from '../models/videos-model.js';
@@ -9,12 +9,13 @@ class LikeService {
     constructor() {
         this.likeRepo = new LikeRepo();
         this.videoRepo = new VideoRepo();
-        this.tweetRepo = new TweetRepo
+        this.tweetRepo = new TweetRepo();
+        this.commentRepo = new CommentRepo();
     }
 
     async toggleVideoLike(videoId, userId) {
 
-        if(isValidObjectId(videoId)) {
+        if(!isValidObjectId(videoId)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
         }
 
@@ -48,8 +49,8 @@ class LikeService {
 
     //TODO: complete this method wrong method
     async toggleCommentLike(commentId, userId) {
-        if(isValidObjectId(commentId)) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId");
+        if(!isValidObjectId(commentId) || !isValidObjectId(userId._id)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId or userId");
         }
 
         if(!userId._id) {
@@ -57,7 +58,7 @@ class LikeService {
         }
 
 
-        const comment = await this.likeRepo.get(commentId);
+        const comment = await this.commentRepo.get(commentId);
 
         if(!comment) {
             throw new ApiError(StatusCodes.NOT_FOUND, "comment not found");
@@ -81,7 +82,7 @@ class LikeService {
     }
 
     async toggleTweetLike(tweetId, userId) {
-        if(isValidObjectId(tweetId)) {
+        if(!isValidObjectId(tweetId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
         }
 
@@ -115,7 +116,7 @@ class LikeService {
 
     async getLikedVideos(userId) {
 
-        if(isValidObjectId(userId._id)) {
+        if(!isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "invalid userId");
         }
 
