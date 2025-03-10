@@ -4,6 +4,7 @@ import TweetService from "./tweet-service.js";
 import SubscriptionService from "./subscription-service.js";
 import LikeService from "./like-service.js";
 import PlayListService from "./playlist-service.js";
+import CommentService from "./comment-service.js";
 
 export {
     UserService,
@@ -11,5 +12,6 @@ export {
     TweetService,
     SubscriptionService,
     LikeService,
-    PlayListService
+    PlayListService,
+    CommentService
 }
