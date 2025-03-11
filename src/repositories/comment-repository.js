@@ -1,5 +1,5 @@
 import {Comment} from '../models/comments-model.js'
-import {CrudRepo} from './index'
+import {CrudRepo} from './index.js'
 
 class CommentRepo extends CrudRepo {
 
