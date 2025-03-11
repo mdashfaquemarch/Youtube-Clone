@@ -55,7 +55,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
             currentPage: pageNumber,
             limit: limitNumber,
             videos: videos,
-        }
+        },
+        "videos fetched successfully"
      ));
 })
 
@@ -75,7 +76,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
      const videoData = req.body;
      const files = req.files;
      const user = req.user;
-
+    /*
      console.log(files);
      console.log("```````````````")
      
@@ -83,18 +84,28 @@ const publishAVideo = asyncHandler(async (req, res) => {
      console.log("```````````````")
      console.log(videoData);
      console.log(`~~~~~~~~~~END OF controller~~~~~~~`)
+
+     */
      const response = await videoService.publishAVideo(user, videoData, files);
 
-     return res.status(StatusCodes.CREATED).json(response);
+     return res.status(StatusCodes.CREATED).json(new ApiResponse(
+        StatusCodes.CREATED,
+        response,
+        "video uploded successfully"
+    ));
      
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const { videoId } = req.params;
     //TODO: get video by id
 
     const response = await videoService.getVideoById(videoId);
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "video by Id fetched successfully"
+    ));
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
@@ -102,13 +113,17 @@ const updateVideo = asyncHandler(async (req, res) => {
     //TODO: update video details like title, description, thumbnail
 
     const files = req.file;
-    console.log("Files in update controller", files);
+    // console.log("Files in update controller", files);
     const updateDetails = req.body;
-    console.log("updateDetails", updateDetails);
+    // console.log("updateDetails", updateDetails);
 
     const response = await videoService.updateVideo(videoId, updateDetails, files);
 
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "video updated successfully"
+    ));
 
 })
 
@@ -116,14 +131,22 @@ const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: delete video
     const response = await videoService.deleteVideo(videoId);
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "video deleted successfully"
+    ));
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
 
     const response = await videoService.toggleStatusOfVideo(videoId);
-    return res.status(StatusCodes.OK).json(response);
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "video toggle published status successfully"
+    ));
 })
 
 export {

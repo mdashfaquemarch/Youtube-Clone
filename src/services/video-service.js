@@ -15,17 +15,22 @@ class VideoService {
   }
 
   async publishAVideo(user, videoData, files) {
+    /*
     console.log(files);
+    
     console.log("```````````````");
 
     console.log(user);
     console.log("```````````````");
     console.log(videoData);
+
+    */
     const videoLocalPath = files?.videoFile?.[0].path || null;
     const thumnailLocalPath = files?.thumbnail?.[0].path || null;
 
-    console.log(`videoLocalpath: ${videoLocalPath}`);
-    console.log(`thumbnailLocalpath: ${thumnailLocalPath}`);
+    // console.log(`videoLocalpath: ${videoLocalPath}`);
+    // console.log(`thumbnailLocalpath: ${thumnailLocalPath}`);
+
     if (!videoLocalPath) {
       throw new ApiError(StatusCodes.BAD_REQUEST, "videoFile is required");
     }
