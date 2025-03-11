@@ -91,8 +91,7 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
-  try {
-    console.log(req.user);
+    // console.log(req.user);
     const logout = await userService.logout(req.user);
 
     const options = {
@@ -106,14 +105,6 @@ const logout = asyncHandler(async (req, res) => {
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(StatusCodes.OK, {}, "User logged Out"));
 
-  } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-      success: false,
-      message: "something went wrong",
-      data: {},
-      error: error,
-    });
-  }
 });
 
 export { signup, login, logout };
