@@ -9,7 +9,7 @@ class UserService {
   }
 
   async signup(userData, files) {
-    try {
+    
       // checking if user exists or not
 
       const existedUser = await this.userRepo.checkUserExists(
@@ -75,7 +75,7 @@ class UserService {
         }
       }
 
-      if (!avatar) {
+      if (!avatar.url) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Avatar file is required");
       }
 
@@ -98,13 +98,7 @@ class UserService {
       }
 
       return createdUser;
-    } catch (error) {
-      console.error("Something went wrong in the UserService : signup", error);
-      throw new ApiError(
-        StatusCodes.INTERNAL_SERVER_ERROR,
-        error.message || "Something went wrong"
-      );
-    }
+    
   }
 
   async login(userData) {
