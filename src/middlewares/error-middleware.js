@@ -1,7 +1,19 @@
+import fs from 'fs'
 const errorHandler = (err, req, res, next) => {
   // Log error only in development mode
   if (process.env.NODE_ENV === "development") {
     console.error(err);
+  }
+
+  // 🛑 Delete uploaded files if an error occurs
+  if (req.files) {
+    Object.values(req.files)
+      .flat()
+      .forEach((file) => {
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      });
   }
 
   let { statusCode = 500, message = "Something went wrong", errors = [] } = err;
