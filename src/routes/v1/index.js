@@ -11,9 +11,9 @@ router.use("/users", userRoutes);
 
 router.use("/videos", videoRoutes);
 
-router.use("/tweet", tweetRoutes);
+router.use("/tweets", tweetRoutes);
 
-router.use("/playlist", playlistRoutes);
+router.use("/playlists", playlistRoutes);
 
 
 export default router;
