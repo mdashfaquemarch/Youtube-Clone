@@ -7,11 +7,11 @@ const subscriptionService = new SubscriptionService();
 
 // ✅ Toggle user subscription to a channel (subscribe/unsubscribe)
 const toggleSubscription = asyncHandler(async (req, res) => {
-    const {channelName} = req.params;
+    const {channelId} = req.params;
     // TODO: toggle subscription
     const userId = req.user?._id;
 
-     const response = await subscriptionService.toggleSubscription(channelName, userId);
+     const response = await subscriptionService.toggleSubscription(channelId, userId);
 
      return res.status(StatusCodes.OK).json(response);
 
