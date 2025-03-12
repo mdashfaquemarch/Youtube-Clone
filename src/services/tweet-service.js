@@ -83,7 +83,9 @@ class TweetService {
     }
 
     async getUserTweets(userId) {
-      
+        if(!isValidObjectId(userId)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "userId is not valid");
+        }
       const user = await this.userRepo.get(userId);
 
       if(!user) {
