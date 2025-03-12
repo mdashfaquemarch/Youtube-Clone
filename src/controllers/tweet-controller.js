@@ -23,13 +23,11 @@ const createTweet = asyncHandler(async (req, res) => {
 
 const getUserTweets = asyncHandler(async (req, res) => {
     // TODO: get user tweets
-    let { username } = req.params;
+    let { userId } = req.params;
 
-    if(username.startsWith("@")) {
-        username = username.slice(1);
-    }
+    
 
-    const response = await tweetService.getUserTweets({username});
+    const response = await tweetService.getUserTweets(userId);
     return res.status(StatusCodes.OK).json(new ApiResponse(
         StatusCodes.OK,
         response,

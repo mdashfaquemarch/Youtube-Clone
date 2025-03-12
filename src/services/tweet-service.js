@@ -82,9 +82,9 @@ class TweetService {
         return deletedTweet;
     }
 
-    async getUserTweets(userData) {
+    async getUserTweets(userId) {
       
-      const user = await this.userRepo.findOnlyOne({username: userData.username});
+      const user = await this.userRepo.get(userId);
 
       if(!user) {
         throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
