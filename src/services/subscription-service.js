@@ -1,10 +1,14 @@
-import { SubsRepo } from '../repositories/index.js'
+import { isValidObjectId } from 'mongoose';
+import { SubsRepo , UserRepo} from '../repositories/index.js'
+import { ApiError } from '../utils/ApiError.js';
+import { StatusCodes } from 'http-status-codes';
 
 
 class SubscriptionService {
 
     constructor() {
         this.subsRepo = new SubsRepo();
+        this.userRepo = new UserRepo();
     }
 
     async toggleSubscription(channelName, userId) {
@@ -37,17 +41,22 @@ class SubscriptionService {
         return { statusCode: 200, data: { subscribed: true }, message: "Subscribed successfully" };
     }
 
-    async getUserSubscribers(channelName) {
-        const channel = await this.subsRepo.findOnlyOne({ username: channelName });
+    async getChannelSubscribers(channelId) {
+        if(!isValidObjectId(channelId)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid channelId");
+        }
 
-        // Check if channel exists
-        if (!channel) {
+        const existingChannel  = await this.userRepo.get(channelId);
+
+        // Check if channel/user exists
+        if (!existingChannel ) {
             return console.log("Channel not found");
         }
 
+
         const subscribers = await this.subsRepo.getChannelInfo(
             {
-                subscription: channel._id
+                subscription: existingChannel._id
             },
             {
                 path: "subscriber",
@@ -58,17 +67,22 @@ class SubscriptionService {
         return subscribers;
     }
 
-    async getUserSubscriptions(channelName) {
-        const channel = await this.subsRepo.findOnlyOne({ username: channelName });
+    async getUserSubscriptions(user) {
 
-        // Check if channel exists
-        if (!channel) {
-            return console.log("Channel not found");
+        if(!isValidObjectId(user._id)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid userId");
+        }
+
+        const existingUser  = await this.userRepo.get(user._id);
+
+        // Check if channel/user exists
+        if (!existingUser ) {
+            return console.log("user not found");
         }
 
         const subscription = await this.subsRepo.getChannelInfo(
             {
-                subscriber: channel._id
+                subscriber: existingUser._id
             },
             {
                 path: "subscription",

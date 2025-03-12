@@ -1,12 +1,11 @@
-import mongoose, {isValidObjectId} from "mongoose"
-import {asyncHandler} from "../utils/asyncHandler.js"
-import { User } from "../models/users-model.js";
-import { Subscription } from "../models/subscriptions-model.js";
-import  {SubscriptionService} from '../services/index.js'
+
+import {asyncHandler} from "../utils/asyncHandler.js";
+import  {SubscriptionService} from '../services/index.js';
 
 
 const subscriptionService = new SubscriptionService();
 
+// ✅ Toggle user subscription to a channel (subscribe/unsubscribe)
 const toggleSubscription = asyncHandler(async (req, res) => {
     const {channelName} = req.params;
     // TODO: toggle subscription
@@ -18,28 +17,28 @@ const toggleSubscription = asyncHandler(async (req, res) => {
 
 })
 
-// controller to return subscriber list of a channel
-const getUserChannelSubscribers = asyncHandler(async (req, res) => {
-    const {channelName} = req.params;
+// ✅ Get all subscribers of a channel
+const getChannelSubscribers = asyncHandler(async (req, res) => {
+    const {channelId} = req.params;
     const userId = req.user?._id;
 
-    const response = await subscriptionService.getUserSubscribers(channelName);
+    const response = await subscriptionService.getChannelSubscribers(channelId);
 
      return res.status(StatusCodes.OK).json(response);
      
 })
 
-// controller to return channel list to which user has subscribed
-const getSubscribedChannels = asyncHandler(async (req, res) => {
-    const { channelName } = req.params;
+// ✅ Get all channels the user is subscribed to
+const getSubscriptions  = asyncHandler(async (req, res) => {
+    const user = req.user;
 
-    const response = await subscriptionService.getUserSubscribers(channelName);
+    const response = await subscriptionService.getUserSubscriptions(user);
 
      return res.status(StatusCodes.OK).json(response);
 })
 
 export {
     toggleSubscription,
-    getUserChannelSubscribers,
-    getSubscribedChannels
+    getChannelSubscribers,
+    getSubscriptions
 }
