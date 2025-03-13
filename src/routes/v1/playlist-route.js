@@ -1,9 +1,10 @@
 import express from 'express';
 import {createPlaylist, getPlaylistById, 
-    getUserPlaylists, addVideoToPlaylist, 
+     addVideoToPlaylist, 
     removeVideoFromPlaylist,
     deletePlaylist,
-    updatePlaylist
+    updatePlaylist,
+    getChannelPlaylists
 } from '../../controllers/playlist-controller.js'
 import { verifyAuth } from '../../middlewares/auth-middleware.js';
 
@@ -17,10 +18,10 @@ router.use(verifyAuth);
 router.route("/").post(createPlaylist)
 
 // Get all playlists of a user
-router.route("/user/:userId").get(getUserPlaylists);
+// router.route("/user/:userId").get(getUserPlaylists);
 
-
-// router.route("/channel/:channelId").get(getChannelPlaylists); // ✅ Get all playlists of a specific channel
+// ✅ Get all playlists of a specific channel
+router.route("/channel/:channelId").get(getChannelPlaylists); 
 
 
 // Get a specific playlist || Update playlist details || Delete a playlist

@@ -7,8 +7,8 @@ class PlayListRepo extends CrudRepo {
         super(PlayList)
     }
 
-    async getChannelPlaylist(data) {
-        const response = await PlayList.find(data)
+    async getPlaylistOfChannel(data, populateFields) {
+        const response = await PlayList.find(data).populate(populateFields)
 
         return response;
     }
@@ -19,13 +19,24 @@ class PlayListRepo extends CrudRepo {
     }
 
     async deleteVideoFromPlayList(playlistId, videoId) {
-        const response = await PlayList.findByIdAndDelete(playlistId, {
+        const response = await PlayList.findByIdAndUpdate(playlistId, {
             $pull: {
                 videos: videoId
             }
-        })
+        }, {new: true}).lean();
         return response;
     }
+
+    async getPlayListById(playlistId) {
+        const response = await PlayList.findById(playlistId)
+        .populate({path: "videos", select: "title description videoFile thumbnail duration", populate: {
+            path: "owner",
+            select: "username avatar"
+        }}).populate("owner", "username avatar").lean();
+
+        return response;
+    }
+
 }
 
 export default PlayListRepo;
