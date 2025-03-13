@@ -1,7 +1,8 @@
 
 import {asyncHandler} from "../utils/asyncHandler.js";
 import  {SubscriptionService} from '../services/index.js';
-
+import { StatusCodes } from "http-status-codes";
+import {ApiResponse} from '../utils/ApiResponse.js'
 
 const subscriptionService = new SubscriptionService();
 
@@ -11,20 +12,35 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     // TODO: toggle subscription
     const userId = req.user?._id;
 
-     const response = await subscriptionService.toggleSubscription(channelId, userId);
+     const {statusCode, data, message} = await subscriptionService.toggleSubscription(channelId, userId);
 
-     return res.status(StatusCodes.OK).json(response);
+     return res.status(StatusCodes.OK).json(new ApiResponse(
+        statusCode,
+        data,
+        message
+     ));
 
 })
 
 // ✅ Get all subscribers of a channel
 const getChannelSubscribers = asyncHandler(async (req, res) => {
     const {channelId} = req.params;
-    const userId = req.user?._id;
-
+   
     const response = await subscriptionService.getChannelSubscribers(channelId);
 
-     return res.status(StatusCodes.OK).json(response);
+     const flatData = response.map((sub) => ({
+        _id: sub.subscriber._id,
+        username:sub.subscriber.username,
+        fullname:sub.subscriber.fullname,
+        avatar:sub.subscriber.avatar,
+        createdAt:sub.createdAt
+
+     }))
+     return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        flatData,
+        "subscriber list successfully fetched"
+     ));
      
 })
 
@@ -34,7 +50,20 @@ const getSubscriptions  = asyncHandler(async (req, res) => {
 
     const response = await subscriptionService.getUserSubscriptions(user);
 
-     return res.status(StatusCodes.OK).json(response);
+      const flatData = response.map((sub) => (
+        {
+            _id: sub.subscription._id,
+            username:sub.subscription.username,
+            fullname:sub.subscription.fullname,
+            avatar:sub.subscription.avatar,
+            createdAt:sub.createdAt
+        }
+      ))
+     return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        flatData,
+        "Subscription list successfully fetched"
+     ));
 })
 
 export {

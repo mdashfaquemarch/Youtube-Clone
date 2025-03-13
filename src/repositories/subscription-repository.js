@@ -13,8 +13,11 @@ class SubsRepo extends CrudRepo{
         return response;
     }
 
-    async getChannelInfo(data, fields) {
-        const response = await Subscription.find(data).populate();;
+    async getChannelInfo(data, poplateFields, relevantFields) {
+        const response = await Subscription
+        .find(data).
+        populate(poplateFields)
+        .select(relevantFields).lean(); // Only keep relevant fields
         return response;
     }
     

@@ -16,7 +16,7 @@ router.use("/tweets", tweetRoutes);
 
 router.use("/playlists", playlistRoutes);
 
-router.use("/subscription", subscriptionRoutes);
+router.use("/subscriptions", subscriptionRoutes);
 
 
 export default router;

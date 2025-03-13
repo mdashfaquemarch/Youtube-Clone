@@ -72,7 +72,7 @@ class SubscriptionService {
 
         // Check if channel/user exists
         if (!existingChannel) {
-            return console.log("Channel not found");
+            throw new ApiError(StatusCodes.NOT_FOUND, "channel not found")
         }
 
         const subscribers = await this.subsRepo.getChannelInfo(
@@ -81,8 +81,9 @@ class SubscriptionService {
             },
             {
                 path: "subscriber",
-                select: "username fullname avatar", // Only include relevant fields
-            }
+                select: "username fullname avatar", // Only populate  relevant fields
+            },
+            "subscriber createdAt -_id" // Only keep relevant fields
         );
 
         return subscribers;
@@ -97,7 +98,7 @@ class SubscriptionService {
 
         // Check if channel/user exists
         if (!existingUser) {
-            return console.log("user not found");
+            throw new ApiError(StatusCodes.NOT_FOUND, "user not found")
         }
 
         const subscription = await this.subsRepo.getChannelInfo(
@@ -106,8 +107,9 @@ class SubscriptionService {
             },
             {
                 path: "subscription",
-                select: "username fullname avatar", // Only include relevant fields
-            }
+                select: "username fullname avatar", // Only populate  relevant fields
+            },
+            "subscription createdAt -_id"  // Only keep relevant fields
         );
 
         return subscription;
