@@ -1,4 +1,4 @@
-# YouTube Clone - 
+# YouTube Clone  
 ## 🚀 Overview
 This project is a **YouTube Clone** that includes features like **video uploads, subscriptions, playlists, likes, comments, and a recommendation system.** It aims to replicate YouTube’s core functionalities with a **scalable backend.**
 
