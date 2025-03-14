@@ -15,8 +15,8 @@ class LikeService {
 
     async toggleVideoLike(videoId, userId) {
 
-        if(!isValidObjectId(videoId)) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
+        if(!isValidObjectId(videoId) && !isValidObjectId(userId._id)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId or userId");
         }
 
         if(!userId._id) {

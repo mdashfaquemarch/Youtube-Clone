@@ -87,6 +87,13 @@ class PlayListService {
       throw new ApiError(StatusCodes.NOT_FOUND, "playlist not found");
     }
 
+     // Check if the video exists in the playlist
+     if (playlist.videos.includes(videoId)) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "video already present in the playlist.")
+ }
+
+   
+
     const result = await this.playlistRepo.addVideoToPlayList(playlistId, {
       $addToSet: { videos: videoId },
     },
@@ -113,8 +120,16 @@ class PlayListService {
       throw new ApiError(StatusCodes.NOT_FOUND, "playlist not found");
     }
 
+    // Check if the video exists in the playlist
+    if (!playlist.videos.includes(videoId)) {
+       throw new ApiError(StatusCodes.NOT_FOUND, "video not found in the playlist")
+  }
+
     const response = await this.playlistRepo.deleteVideoFromPlayList(playlistId, videoId);
 
+    if(!response) {
+      throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Something went wrong while removing video from playlist")
+    }
     return response;
 
   }

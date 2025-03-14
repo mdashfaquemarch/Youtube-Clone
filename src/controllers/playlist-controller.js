@@ -58,7 +58,7 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     const {playlistId, videoId} = req.params;
     // TODO: remove video from playlist
     const response = await  playlistService.removeVideoFromPlaylist(playlistId, videoId);
-
+    
     return res.status(StatusCodes.OK).json(new ApiResponse(
         StatusCodes.OK,
         response,
