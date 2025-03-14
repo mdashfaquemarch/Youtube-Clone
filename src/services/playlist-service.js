@@ -12,6 +12,10 @@ class PlayListService {
   }
 
   async createPlaylist(name, description, userId) {
+     if(!isValidObjectId(userId._id)) {
+       throw new ApiError(StatusCodes.BAD_REQUEST, "Invlaid userId")
+     }
+     
     if (!userId._id) {
       throw new ApiError(StatusCodes.UNAUTHORIZED, "user is not authenticated");
     }
@@ -104,7 +108,7 @@ class PlayListService {
 
   async removeVideoFromPlaylist(playlistId, videoId) {
 
-    if (!isValidObjectId(playlistId) && !isValidObjectId(videoId)) {
+    if (!isValidObjectId(playlistId) || !isValidObjectId(videoId)) {
       throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid playlistId or videoId");
     }
 

@@ -15,7 +15,7 @@ class LikeService {
 
     async toggleVideoLike(videoId, userId) {
 
-        if(!isValidObjectId(videoId) && !isValidObjectId(userId._id)) {
+        if(!isValidObjectId(videoId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId or userId");
         }
 
@@ -55,7 +55,7 @@ class LikeService {
     //TODO: complete this method wrong method
     async toggleCommentLike(commentId, userId) {
         
-        if(!isValidObjectId(commentId) && !isValidObjectId(userId._id)) {
+        if(!isValidObjectId(commentId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId or userId");
         }
 
@@ -92,7 +92,7 @@ class LikeService {
     }
 
     async toggleTweetLike(tweetId, userId) {
-        if(!isValidObjectId(tweetId) && !isValidObjectId(userId._id)) {
+        if(!isValidObjectId(tweetId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
         }
 

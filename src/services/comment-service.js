@@ -13,7 +13,7 @@ class CommentService {
 
     async createComment(videoId, content, userId) {
 
-        if(!isValidObjectId(videoId) || isValidObjectId(userId._id)) {
+        if(!isValidObjectId(videoId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId or userId")
         }
 

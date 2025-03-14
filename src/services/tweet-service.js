@@ -38,7 +38,7 @@ class TweetService {
 
     async updateTweet(tweetId, data, user) {
 
-        if(!isValidObjectId(tweetId)) {
+        if(!isValidObjectId(tweetId) || !isValidObjectId(user._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "tweetId is not valid");
         }
         
