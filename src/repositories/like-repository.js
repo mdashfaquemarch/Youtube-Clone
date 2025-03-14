@@ -8,13 +8,25 @@ class LikeRepo extends CrudRepo {
     }
 
     async findOnlyOneAndDelete(data) {
-        const response = await Like.findOneAndDelete(data).populate("videos");
+        const response = await Like.findOneAndDelete(data);
         return response;
     } 
 
     async findAllLikedVideos(data) {
-        const response = await Like.find(data);
-        return response;
+        const response = await Like.find({
+            ...data,
+            video: {
+                $exists: true
+            }
+        })
+        .select("video")
+        .populate({path: "video", populate: {
+          path: "owner",
+          select: "username avatar"
+        }}).lean();
+
+        const videos = response.map(like => like.video);
+        return videos;
     }
 }
 

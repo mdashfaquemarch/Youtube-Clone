@@ -2,7 +2,7 @@ import { isValidObjectId } from 'mongoose';
 import {LikeRepo, TweetRepo, VideoRepo, CommentRepo} from '../repositories/index.js'
 import { ApiError } from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
-import { Video } from '../models/videos-model.js';
+
 
 class LikeService {
 
@@ -35,21 +35,27 @@ class LikeService {
             likedBy: userId._id
         })
 
+
         if(existingLike) {
-            return {statusCode: StatusCodes.OK, data: { isLiked: false}, message: "video unliked successfully"};
+            return {statusCode: StatusCodes.OK, data: { isLiked: false, videoId: videoId}, message: "video unliked successfully"};
         }
 
-        await this.likeRepo.create({
+        const likedVideo = await this.likeRepo.create({
             video: videoId,
             likedBy: userId._id
         })
 
-        return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "video liked successfully"};
+        if(!likedVideo) {
+            throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Something went wrong while liking the video")
+        }
+
+        return {statusCode: StatusCodes.OK, data: { isLiked: true, videoId: videoId }, message: "video liked successfully"};
     }
 
     //TODO: complete this method wrong method
     async toggleCommentLike(commentId, userId) {
-        if(!isValidObjectId(commentId) || !isValidObjectId(userId._id)) {
+        
+        if(!isValidObjectId(commentId) && !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId or userId");
         }
 
@@ -70,19 +76,23 @@ class LikeService {
         })
 
         if(existingLike) {
-            return {statusCode: StatusCodes.OK, data: { isLiked: false}, message: "comment unliked successfully"};
+            return {statusCode: StatusCodes.OK, data: { isLiked: false, commentId: commentId}, message: "comment unliked successfully"};
         }
 
-        await this.likeRepo.create({
+        const LikedComment =  await this.likeRepo.create({
             comment: commentId,
             likedBy: userId._id
         })
 
-        return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "comment liked successfully"};
+        if(!LikedComment) {
+            throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Error while liking the comment");
+        }
+
+        return {statusCode: StatusCodes.OK, data: { isLiked: true, commentId: commentId }, message: "comment liked successfully"};
     }
 
     async toggleTweetLike(tweetId, userId) {
-        if(!isValidObjectId(tweetId) || !isValidObjectId(userId._id)) {
+        if(!isValidObjectId(tweetId) && !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId");
         }
 
@@ -103,15 +113,19 @@ class LikeService {
         })
 
         if(existingLike) {
-            return {statusCode: StatusCodes.OK, data: { isLiked: false}, message: "tweet unliked successfully"};
+            return {statusCode: StatusCodes.OK, data: { isLiked: false, tweetId: tweetId}, message: "tweet unliked successfully"};
         }
 
-        await this.likeRepo.create({
+        const likedTweet = await this.likeRepo.create({
             tweet: tweetId,
             likedBy: userId._id
         })
 
-        return {StatusCodes: StatusCodes.OK, data: { isLiked: true }, message: "tweet liked successfully"};
+        if(!likedTweet) {
+            throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, "Error while liking the tweet")
+        }
+
+        return {statusCode: StatusCodes.OK, data: { isLiked: true, tweetId: tweetId }, message: "tweet liked successfully"};
     }
 
     async getLikedVideos(userId) {
