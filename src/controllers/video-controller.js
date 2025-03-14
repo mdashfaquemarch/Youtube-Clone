@@ -152,6 +152,12 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     ));
 })
 
+/*
+ - get video by Id - its views likes
+ - populate videoById with comments - comments likes
+*/
+const getVideoDetails = async () => {};
+
 export {
     getAllVideos,
     publishAVideo,
