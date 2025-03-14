@@ -51,10 +51,13 @@ const getAllVideos = asyncHandler(async (req, res) => {
         200,
         {
             totalVideos : totalVideos,
-            totalPages: Math.ceil(totalVideos / limitNumber),
-            currentPage: pageNumber,
-            limit: limitNumber,
-            videos: videos,
+            pagination: {
+                currentPage: pageNumber,
+                totalPages: Math.ceil(totalVideos / limitNumber),
+                totalVideos,
+                hasNextPage: pageNumber * limitNumber < totalVideos,
+                hasPrevPage: pageNumber > 1
+            },
         },
         "videos fetched successfully"
      ));

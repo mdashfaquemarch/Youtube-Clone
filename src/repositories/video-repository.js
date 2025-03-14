@@ -28,6 +28,17 @@ class VideoRepo extends CrudRepo {
 
         return {videos, totalVideos};
     }
+
+    async getAllDashboardVideos(channelId, pageNumber, limitNumber) {
+        const videos = await Video.find({owner: channelId})
+        .sort({createdAt: -1})
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber)
+
+        const totalVideos = await Video.countDocuments({owner: channelId});
+        
+        return {videos, totalVideos};
+    }
 }
 
 export default VideoRepo;

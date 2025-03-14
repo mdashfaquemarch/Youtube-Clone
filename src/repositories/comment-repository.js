@@ -8,10 +8,14 @@ class CommentRepo extends CrudRepo {
     }
 
     async getVideoComments(videoId, pageNumber, limitNumber) {
-        const response = await Comment.find({video: videoId}).sort({createdAt: -1}).skip((pageNumber - 1) * limitNumber).limit(limitNumber);
-        return response;
-    }
+        const comments = await Comment.find({video: videoId})
+        .sort({ createdAt: -1 })
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber).populate("owner", "username avatar");
 
+        const totalComments = await Comment.countDocuments({video: videoId});
+        return {comments, totalComments};
+    }
 
 }
 

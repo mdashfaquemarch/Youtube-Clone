@@ -25,7 +25,7 @@ class CommentService {
 
         const comment = await this.commentRepo.create({
             content: content,
-            videoId: videoId,
+            video: videoId,
             owner: userId._id
         });
 
@@ -37,17 +37,12 @@ class CommentService {
 
     }
 
-    async updateComment(videoId,commentId, content, userId) {
-        if(!isValidObjectId(videoId) || isValidObjectId(userId._id)) {
+    async updateComment(commentId, content, userId) {
+        if(!isValidObjectId(commentId) || !isValidObjectId(userId._id)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId or userId")
         }
 
-        const video = await this.videoRepo.get(videoId);
-
-        if(!video) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
-        }
-
+    
         const comment = await this.commentRepo.get(commentId);
 
         if(!comment) {
@@ -65,15 +60,9 @@ class CommentService {
         return response;
     }
 
-    async deleteComment(videoId, commentId, userId) {
-        if(!isValidObjectId(videoId) || isValidObjectId(userId._id)) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid videoId or userId")
-        }
-
-        const video = await this.videoRepo.get(videoId);
-
-        if(!video) {
-            throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
+    async deleteComment(commentId, userId) {
+        if(!isValidObjectId(commentId) || !isValidObjectId(userId._id)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid commentId or userId")
         }
 
         const comment = await this.commentRepo.get(commentId);
@@ -83,7 +72,7 @@ class CommentService {
         }
 
         if(userId._id.toString() !== comment.owner.toString()) {
-            throw new ApiError(StatusCodes.UNAUTHORIZED, "user is not authorized to update the comment");
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "user is not authorized to delete the comment");
         }
 
 
@@ -104,8 +93,8 @@ class CommentService {
             throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
         }
 
-        const comments = await this.commentRepo.getVideoComments(videoId, pageNumber, limitNumber);
-        return comments;
+        const {comments, totalComments} = await this.commentRepo.getVideoComments(videoId, pageNumber, limitNumber);
+        return {comments, totalComments};
     }
     
 }

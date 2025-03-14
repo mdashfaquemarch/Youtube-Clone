@@ -26,7 +26,7 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
     const userId = req.user;
 
-    const {statusCode, data, message} = await likeService.toggleCommentLike(videoId, userId);
+    const {statusCode, data, message} = await likeService.toggleCommentLike(commentId, userId);
 
     return res.status(StatusCodes.OK).json(new ApiResponse(
         statusCode,
