@@ -153,10 +153,22 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
 })
 
 /*
- - get video by Id - its views likes
- - populate videoById with comments - comments likes
+ - get video by Id -
+ - it adds views to the video and add video to user watchHistory
+ - response - channel subscriber avatar username channel is subscribed or not
+ - resonse - video title decription thumbnail total like of video total views of video if video is liked or not
+ - response - total comments comments with like if comments is liked or not 
 */
-const getVideoDetails = async () => {};
+const getVideoByIdDetails = async (req, res) => {
+    const {videoId} = req.params;
+    const userId  = req.user?._id;
+    const response = await videoService.getVideoDetails(videoId, userId);
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "video By ID details fetched successfully"
+    ));
+};
 
 export {
     getAllVideos,
@@ -165,5 +177,5 @@ export {
     updateVideo,
     deleteVideo,
     togglePublishStatus,
-    getVideoDetails
+    getVideoByIdDetails
 }

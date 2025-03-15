@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(verifyAuth);
 
 
-router.route("/:username").get(getChannelProfile)
+router.route("/profile/:username").get(getChannelProfile)
 router.route("/watchhistory").get(getUserChannelWatchHistory)
 
 

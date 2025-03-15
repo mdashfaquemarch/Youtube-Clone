@@ -16,6 +16,10 @@ const getAllVideosOfChannel = async (req, res) => {
 const getUserChannelWatchHistory = async (req, res) => {
   const userId = req.user?._id;
 
+  if (!userId) {
+    throw new ApiError(StatusCodes.UNAUTHORIZED, "User is not authenticated");
+  }
+
   const user = await User.aggregate([
     {
       $match: {
@@ -28,58 +32,65 @@ const getUserChannelWatchHistory = async (req, res) => {
         localField: "watchHistory",
         foreignField: "_id",
         as: "watchHistory",
-      },
-      pipeline: [
-        {
-          $lookup: {
-            from: "users",
-            localField: "owner",
-            foreignField: "_id",
-            as: "owner",
-            pipeline: [
-              {
-                $project: {
-                  fullName: 1,
-                  username: 1,
-                  avatar: 1,
-                },
-              },
-            ],
-          },
-        },
-        {
-          $addFields: {
-            owner: {
-              $first: "$owner",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
             },
           },
-        },
-      ],
+          {
+            $project: {
+              title: 1,
+              thumbnail: 1,
+              views: 1,
+              owner: { $arrayElemAt: ["$owner", 0] }, // Fix owner field
+            },
+          },
+          {
+            $project: {
+              title: 1,
+              thumbnail: 1,
+              views: 1,
+              "owner._id": 1,
+              "owner.username": 1,
+              "owner.avatar": 1,
+            },
+          },
+        ],
+      },
     },
   ]);
+
+  if (!user.length) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "User not found");
+  }
 
   return res
     .status(StatusCodes.OK)
     .json(
       new ApiResponse(
         StatusCodes.OK,
-        user[0].watchHistory,
+        user[0]?.watchHistory || [],
         "Watch history fetched successfully"
       )
     );
 };
 
+
 const getChannelProfile = async (req, res) => {
   const { username } = req.params;
 
-  if (!username.trim()) {
-    throw new ApiError(StatusCodes.BAD_REQUEST, "username is missing");
+  if (!username || !username.trim()) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Username is missing");
   }
 
   const channel = await User.aggregate([
     {
       $match: {
-        username: username?.toLowerCase(),
+        username: username.toLowerCase(),
       },
     },
     {
@@ -100,18 +111,10 @@ const getChannelProfile = async (req, res) => {
     },
     {
       $addFields: {
-        subscribersCount: {
-          $size: "$subscribers",
-        },
-        subscriptionCount: {
-          $size: "$subscriptions",
-        },
+        subscribersCount: { $size: "$subscribers" },
+        subscriptionCount: { $size: "$subscriptions" },
         isSubscribed: {
-          $cond: {
-            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
-            then: true,
-            else: false,
-          },
+          $in: [new mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"],
         },
       },
     },
@@ -129,7 +132,7 @@ const getChannelProfile = async (req, res) => {
     },
   ]);
 
-  if (!channel || channel.length === 0) {
+  if (!channel.length) {
     throw new ApiError(StatusCodes.NOT_FOUND, "Channel does not exist");
   }
 

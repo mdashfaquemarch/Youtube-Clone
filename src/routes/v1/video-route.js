@@ -1,6 +1,6 @@
 import express from "express";
 
-import { publishAVideo, getVideoById , deleteVideo, updateVideo, togglePublishStatus, getAllVideos} from "../../controllers/video-controller.js";
+import { publishAVideo, getVideoById , deleteVideo, updateVideo, togglePublishStatus, getAllVideos, getVideoByIdDetails} from "../../controllers/video-controller.js";
 import validate from "../../middlewares/validate-middleware.js";
 import { verifyAuth } from "../../middlewares/auth-middleware.js";
 import { createVideoValue, updateVideoValue} from "../../utils/validators/video.js";
@@ -28,7 +28,7 @@ router.route("/publish-video").post(
 );
 
 router.route("/:videoId")
-.get(getVideoById)
+.get(getVideoByIdDetails)
 .delete(deleteVideo);
 
 router.route("/update-video/:videoId")

@@ -3,7 +3,6 @@ export {
     getTrendingVideos,
     getRecommendedVideos,
     getSubscriptionFeed,
-    getCategoryFeed,
     getWatchHistoryFeed
 }
 

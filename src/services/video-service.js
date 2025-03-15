@@ -210,6 +210,29 @@ class VideoService {
 
     return statusUpdated;
   }
+
+  /*
+ - get video by Id -
+ - it adds views to the video and add video to user watchHistory
+ - response - channel subscriber avatar username channel is subscribed or not
+ - resonse - video title decription thumbnail total like of video total views of video if video is liked or not
+ - response - total comments comments with like if comments is liked or not 
+*/
+
+  async getVideoDetails(videoId, userId) {
+
+    if(!isValidObjectId(videoId) || !isValidObjectId(userId)) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid VideoId or UserId");
+    }
+
+    const response = await this.videoRepo.getVideoDetails(videoId, userId);
+
+    // if(!response || response.length === 0) {
+    //   throw new ApiError(StatusCodes.NOT_FOUND, "video not found");
+    // }
+
+    return response;
+  }
 }
 
 export default VideoService;
