@@ -9,6 +9,16 @@ const dashboardService = new DashboardService();
 
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
+    const {channelId} = req.params;
+    const userId = req.user?._id;
+
+    const response = await dashboardService.channelStats(channelId, userId);
+
+    return res.status(StatusCodes.OK).json(new ApiResponse(
+        StatusCodes.OK,
+        response,
+        "channel stats fetched successfully"
+    ))
 })
 
 
