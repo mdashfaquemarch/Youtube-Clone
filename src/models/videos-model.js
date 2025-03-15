@@ -25,6 +25,10 @@ const videoSchema = new mongoose.Schema({
         type: Boolean,
         default: true
      },
+     views: {
+      type: Number,
+      default: 0
+     },
      owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

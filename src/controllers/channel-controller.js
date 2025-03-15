@@ -5,5 +5,14 @@
 */
 const getVideosOfAChannel = async () => {};
 
+/* user only check their own watch history */
+const getUserChannelWatchHistory = async () => {
+
+}
+
+
+const getChannelProfile = async () => {}
+
+
 
 
