@@ -8,6 +8,7 @@ import subscriptionRoutes from './subscription-route.js'
 import likeRoutes from './like-route.js'
 import commentRoutes from './comment-route.js'
 import dashboardRoutes from './dashboard-route.js'
+import channelRoutes from './channel-route.js'
 
 const router = express.Router();
 
@@ -26,6 +27,8 @@ router.use("/likes" , likeRoutes);
 router.use("/comments", commentRoutes);
 
 router.use("/dashboards", dashboardRoutes);
+
+router.use("/channels", channelRoutes);
 
 
 export default router;
