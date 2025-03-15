@@ -71,6 +71,16 @@ class CrudRepo {
             throw error;
         }
     }
+
+    async searchWithQuery(query) {
+        try {
+            const response = await this.model.find(query);
+            return response;
+        } catch (error) {
+            console.log("Something went wrong in crud repo: findWith");
+            throw error;
+        }
+    }
 }
 
 

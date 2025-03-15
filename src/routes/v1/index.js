@@ -9,6 +9,8 @@ import likeRoutes from './like-route.js'
 import commentRoutes from './comment-route.js'
 import dashboardRoutes from './dashboard-route.js'
 import channelRoutes from './channel-route.js'
+import searchRoutes from './search-route.js'
+import feedRoutes from './feed-route.js'
 
 const router = express.Router();
 
@@ -30,5 +32,8 @@ router.use("/dashboards", dashboardRoutes);
 
 router.use("/channels", channelRoutes);
 
+router.use("/search", searchRoutes);
+
+router.use("/feed", feedRoutes);
 
 export default router;

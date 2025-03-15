@@ -15,7 +15,9 @@ const gettrendingVideos = async () => {};
 
 
 
-const getRecommendedVideos = async () => {};
+const homeFeed = async () => {};
+
+export {homeFeed}
 
 /*
   A recommendation system:

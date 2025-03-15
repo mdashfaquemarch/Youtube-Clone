@@ -6,6 +6,7 @@ import LikeService from "./like-service.js";
 import PlayListService from "./playlist-service.js";
 import CommentService from "./comment-service.js";
 import DashboardService from "./dashboard-service.js";
+import SearchService from "./search-service.js";
 
 export {
     UserService,
@@ -15,5 +16,6 @@ export {
     LikeService,
     PlayListService,
     CommentService,
-    DashboardService
+    DashboardService,
+    SearchService
 }

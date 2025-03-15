@@ -14,7 +14,7 @@ const videoService = new VideoService();
 
 const getAllVideos = asyncHandler(async (req, res) => {
     //TODO: get all videos based on query, sort, pagination
-    const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", userId } = req.query;
+    const { page = 1, limit = 10, query, sortBy = "createdAt", sortType = "desc", } = req.query;
 
        // Convert `page` & `limit` to numbers and validate them
     const pageNumber = Math.max(parseInt(page, 10), 1) || 1;
