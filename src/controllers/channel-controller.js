@@ -2,15 +2,54 @@ import { StatusCodes } from "http-status-codes";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/users-model.js";
+import {Video} from '../models/videos-model.js'
 import mongoose from "mongoose";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
 
 
 
-//  videos [] -> it has title thumnail and owner username and avatar views
-const getAllVideosOfChannel = async (req, res) => {
+const getAllVideosOfChannel = asyncHandler(async (req, res) => {
+  const { username } = req.params;
+  const { page = 1, limit = 10 } = req.query; // Default page=1, limit=10
 
-}
+  // Convert query params to numbers
+  const pageNumber = Math.max(parseInt(page, 10), 1);
+  const limitNumber = Math.max(parseInt(limit, 10), 1);
+  const skip = (pageNumber - 1) * limitNumber;
+
+   const user = await User.findOne({username: username});
+
+   if(!user) {
+    throw new ApiError(StatusCodes.NOT_FOUND, "user not found")
+   }
+ 
+  // Fetch channel videos
+  const allVideos = await Video.find({ owner: user._id })
+    .sort({ createdAt: -1 }) // Newest videos first
+    .populate("owner", "username avatar") // Get owner details
+    .limit(limitNumber)
+    .skip(skip)
+    .lean()
+    .exec();
+
+  // Count total videos for pagination
+  const totalVideos = await Video.countDocuments({ owner: user._id });
+
+  return res.status(StatusCodes.OK).json(
+    new ApiResponse(StatusCodes.OK, {
+      videos: allVideos,
+      pagination: {
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalVideos / limitNumber),
+        totalResults: totalVideos,
+        hasNextPage: pageNumber * limitNumber < totalVideos,
+        hasPrevPage: pageNumber > 1,
+      },
+    },
+    "Videos fetched successfully")
+  );
+});
 
 /* user only check their own watch history */
 const getUserChannelWatchHistory = async (req, res) => {
